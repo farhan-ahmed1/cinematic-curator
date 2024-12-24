@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood-based Cinematic Curator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl">
+        <h1 class="text-3xl font-bold mb-4 text-center text-gray-800">How are you feeling?</h1>
+        <p class="mb-4 text-center text-gray-600">Get Movie Recommendations</p>
+        
+        <form id="moodForm" class="mt-4">
+            <textarea id="userInput" name="user_input" rows="4" class="w-full p-2 border rounded-md" placeholder="Describe how you're feeling..."></textarea>
+            <input type="email" id="userEmail" name="user_email" class="w-full mt-2 p-2 border rounded-md" placeholder="Your email">
+            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Get Recommendations</button>
+        </form>
+
+        <div id="loading" class="mt-4 text-center hidden">
+            Analyzing your mood and finding perfect movies for you...
+        </div>
+
+        <div id="error" class="mt-4 text-center hidden text-red-500">
+            An error occurred. Please try again.
+        </div>
+
+        <div id="result" class="mt-4 hidden">
+            <h2 class="text-xl font-semibold mb-2 text-gray-800">Your Mood: <span id="detectedMood"></span></h2>
+            <h2 class="text-xl font-semibold mb-2 text-gray-800">Recommended Movies:</h2>
+            <div id="movieRecommendations" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('moodForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userInput = document.getElementById('userInput').value;
+            const userEmail = document.getElementById('userEmail').value;
+            
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+
+            try {
+                const formData = new FormData();
+                formData.append('user_input', userInput);
+                formData.append('user_email', userEmail);
+
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                
+                document.getElementById('detectedMood').textContent = data.emotion;
+                const recommendationsDiv = document.getElementById('movieRecommendations');
+                recommendationsDiv.innerHTML = '';
+
+                data.movies.forEach(movie => {
+                    const movieDiv = document.createElement('div');
+                    movieDiv.className = 'bg-white p-4 rounded-lg shadow';
+                    movieDiv.innerHTML = `
+                        <img src="${movie.poster || '/path/to/placeholder-image.jpg'}" alt="${movie.title}" class="w-full h-48 object-cover rounded-md mb-2">
+                        <h3 class="font-semibold text-lg mb-1">${movie.title}</h3>
+                        <a href="${movie.link}" target="_blank" class="text-blue-500 hover:underline">More Info</a>
+                    `;
+                    recommendationsDiv.appendChild(movieDiv);
+                });
+
+                document.getElementById('result').classList.remove('hidden');
+
+                if (data.email_sent) {
+                    alert('An email with your recommendations has been sent!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('error').classList.remove('hidden');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
