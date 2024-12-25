@@ -1,4 +1,4 @@
-# cinematic-curator
+# Cinematic Curator
 An AI-powered web application that recommends movies based on your emotional state, built with Flask, OpenAI, and MailerSend.
 
 ## Features 
