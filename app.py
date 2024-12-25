@@ -6,7 +6,7 @@ import torch
 from dotenv import load_dotenv 
 import requests
 import logging
-from mailersend import emails  # Import MailerSend
+from mailersend import emails  
 import re
 
 logging.basicConfig(level=logging.INFO)
@@ -90,7 +90,7 @@ def send_recommendation_email(to_email, emotion, movies):
 
     mail_from = {
         "name": "Movie Recommendation Service",
-        "email": "MS_BthsgO@trial-351ndgw089x4zqx8.mlsender.net" 
+        "email": senders_email,
     }
 
     recipients = [
