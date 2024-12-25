@@ -4,9 +4,9 @@ An AI-powered web application that recommends movies based on your emotional sta
 ## Features 
 
 - Emotion analysis through natural language processing
-- AI-powered movie recommendations using OpenAI's GPT-3.5 Turbo
+- AI-powered movie recommendations using OpenAI's GPT-4 Turbo
 - Rich movie details from The Movie Database (TMDb)
-- Email notifications with personalized recommendations via Twilio SendGrid
+- Email notifications with personalized recommendations via MailerSend
 - Modern, responsive UI with Tailwind CSS
 
 ## How to run the Application
